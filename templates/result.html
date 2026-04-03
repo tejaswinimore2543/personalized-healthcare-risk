@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Health Prediction Result</title>
+
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #6dd5a7, #b8e994);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card {
+            background: white;
+            width: 450px;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 10px;
+        }
+
+        .prediction {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .low { color: green; }
+        .medium { color: orange; }
+        .high { color: red; }
+
+        .progress-box {
+            background: #eee;
+            border-radius: 20px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .progress-bar {
+            padding: 8px;
+            color: white;
+            font-weight: bold;
+        }
+
+        canvas {
+            margin-top: 20px;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 25px;
+            border: none;
+            border-radius: 8px;
+            background: green;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: darkgreen;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Health Prediction Result</h2>
+
+    <!-- Prediction Text -->
+    <div class="prediction
+        {% if risk_percentage < 30 %}low
+        {% elif risk_percentage < 60 %}medium
+        {% else %}high{% endif %}">
+        Prediction: {{ prediction }}
+    </div>
+
+    <!-- Risk Percentage -->
+    <h3>Risk Percentage: {{ risk_percentage }}%</h3>
+
+    <!-- Progress Bar -->
+    <div class="progress-box">
+        <div class="progress-bar"
+             style="
+             width: {{ risk_percentage }}%;
+             background:
+             {% if risk_percentage < 30 %}green
+             {% elif risk_percentage < 60 %}orange
+             {% else %}red{% endif %};">
+            {{ risk_percentage }}%
+        </div>
+    </div>
+
+    <!-- Chart -->
+    <canvas id="healthChart" width="400" height="250"></canvas>
+
+    <!-- Button -->
+    <form action="/">
+        <button type="submit">Predict Again</button>
+    </form>
+</div>
+
+<script>
+    const ctx = document.getElementById('healthChart').getContext('2d');
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Recency', 'Frequency', 'Monetary', 'Time'],
+            datasets: [{
+                label: 'Input Values',
+                data: [
+                    {{ recency }},
+                    {{ frequency }},
+                    {{ monetary }},
+                    {{ time }}
+                ],
+                backgroundColor: [
+                    '#1abc9c',
+                    '#3498db',
+                    '#f39c12',
+                    '#9b59b6'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
